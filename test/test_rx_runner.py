@@ -44,14 +44,11 @@ class RunnerTestCase(TestCase):
 
         def drv1(sinks):
             sinks.subscribe(lambda i: test_values.append(i))
-
-            def create_counter_stream():
-                return Observable.from_([1, 2, 3])
-
-            return Drv1Source(counter=create_counter_stream)
+            counter_stream = Observable.from_([1, 2, 3])
+            return Drv1Source(counter=counter_stream)
 
         def main(sources):
-            val = sources.drv1.counter()
+            val = sources.drv1.counter
             return MainSink(drv1=val)
 
         drivers = MainDrivers(drv1=drv1)
@@ -78,13 +75,11 @@ class RunnerTestCase(TestCase):
             return None
 
         def drv2(sinks):
-            def create_counter_stream():
-                return Observable.from_([1, 2, 3])
-
-            return Drv2Source(counter=create_counter_stream)
+            counter_stream = Observable.from_([1, 2, 3])
+            return Drv2Source(counter=counter_stream)
 
         def main(sources):
-            val = sources.drv2.counter()
+            val = sources.drv2.counter
             return MainSink(drv1=val)
 
         drivers = MainDrivers(drv1=drv1, drv2=drv2)
