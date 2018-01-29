@@ -2,7 +2,7 @@ from unittest import TestCase
 
 from collections import namedtuple
 from rx import Observable
-from cyclotron.rx_runner import run
+from cyclotron.rx_runner import run, Driver
 
 
 class RunnerTestCase(TestCase):
@@ -12,18 +12,19 @@ class RunnerTestCase(TestCase):
         '''
         MainDrivers = namedtuple('MainDrivers', ['drv1'])
         MainSink = namedtuple('MainSink', ['drv1'])
-
         test_values = []
 
-        def drv1(sinks):
-            sinks.subscribe(lambda i: test_values.append(i))
+        def drv1(sink):
+            sink.values.subscribe(lambda i: test_values.append(i))
             return None
+        Drv1Sink = namedtuple('Drv1Sink', ['values'])
+        Drv1Driver = Driver(call=drv1, sink=Drv1Sink)
 
         def main(sources):
             val = Observable.from_([1, 2, 3])
-            return MainSink(drv1=val)
+            return MainSink(drv1=Drv1Sink(values=val))
 
-        drivers = MainDrivers(drv1=drv1)
+        drivers = MainDrivers(drv1=Drv1Driver)
         run(main, drivers)
 
         self.assertEqual(3, len(test_values))
@@ -34,24 +35,25 @@ class RunnerTestCase(TestCase):
     def test_run_1srcsnk(self):
         ''' Creates a cycle with one sink/source driver.
         '''
-        Drv1Source = namedtuple('Drv1Source', ['counter'])
-
         MainDrivers = namedtuple('MainDrivers', ['drv1'])
         MainSource = namedtuple('MainSource', ['drv1'])
         MainSink = namedtuple('MainSink', ['drv1'])
-
         test_values = []
 
-        def drv1(sinks):
-            sinks.subscribe(lambda i: test_values.append(i))
+        Drv1Source = namedtuple('Drv1Source', ['counter'])
+        Drv1Sink = namedtuple('Drv1Sink', ['values'])
+
+        def drv1(sink):
+            sink.values.subscribe(lambda i: test_values.append(i))
             counter_stream = Observable.from_([1, 2, 3])
             return Drv1Source(counter=counter_stream)
+        Drv1Driver = Driver(call=drv1, sink=Drv1Sink)
 
         def main(sources):
             val = sources.drv1.counter
-            return MainSink(drv1=val)
+            return MainSink(drv1=Drv1Sink(values=val))
 
-        drivers = MainDrivers(drv1=drv1)
+        drivers = MainDrivers(drv1=Drv1Driver)
         run(main, drivers, MainSource)
 
         self.assertEqual(3, len(test_values))
@@ -62,27 +64,31 @@ class RunnerTestCase(TestCase):
     def test_run_1src_1snk(self):
         ''' Creates a cycle with one sink driver and one source driver.
         '''
+        test_values = []
+        Drv1Sink = namedtuple('Drv1Sink', ['values'])
+
+        def drv1(sink):
+            sink.values.subscribe(lambda i: test_values.append(i))
+            return None
+        Drv1Driver = Driver(call=drv1, sink=Drv1Sink)
+
+        Drv2Sink = namedtuple('Drv1Sink', [])
         Drv2Source = namedtuple('Drv2Source', ['counter'])
+
+        def drv2(sinks):
+            counter_stream = Observable.from_([1, 2, 3])
+            return Drv2Source(counter=counter_stream)
+        Drv2Driver = Driver(call=drv2, sink=Drv2Sink)
 
         MainDrivers = namedtuple('MainDrivers', ['drv1', 'drv2'])
         MainSource = namedtuple('MainSource', ['drv1', 'drv2'])
         MainSink = namedtuple('MainSink', ['drv1'])
 
-        test_values = []
-
-        def drv1(sinks):
-            sinks.subscribe(lambda i: test_values.append(i))
-            return None
-
-        def drv2(sinks):
-            counter_stream = Observable.from_([1, 2, 3])
-            return Drv2Source(counter=counter_stream)
-
         def main(sources):
             val = sources.drv2.counter
-            return MainSink(drv1=val)
+            return MainSink(drv1=Drv1Sink(values=val))
 
-        drivers = MainDrivers(drv1=drv1, drv2=drv2)
+        drivers = MainDrivers(drv1=Drv1Driver, drv2=Drv2Driver)
         run(main, drivers, MainSource)
 
         self.assertEqual(3, len(test_values))
