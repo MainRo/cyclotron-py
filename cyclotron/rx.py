@@ -1,7 +1,6 @@
 from collections import namedtuple, OrderedDict
 from rx.subjects import Subject
 
-Driver = namedtuple('Driver', ['call', 'sink'])
 Program = namedtuple('Program', ['sinks', 'sources', 'run'])
 
 
@@ -20,12 +19,12 @@ def make_sink_proxies(drivers):
     if drivers is not None:
         for driver_name in drivers._fields:
             driver = getattr(drivers, driver_name)
-            driver_sink = getattr(driver, 'sink')
+            driver_sink = getattr(driver, 'output')
             driver_sink_proxies = OrderedDict()
             for name in driver_sink._fields:
                 driver_sink_proxies[name] = Subject()
 
-            sink_proxies[driver_name] = driver.sink(**driver_sink_proxies)
+            sink_proxies[driver_name] = driver.output(**driver_sink_proxies)
     return sink_proxies
 
 
@@ -43,15 +42,14 @@ def subscribe_sinks(sinks, sink_proxies):
     for driver_name in sinks._fields:
         driver = getattr(sinks, driver_name)
         for sink_name in driver._fields:
-            print("driver {}, subscribe {}".format(driver_name, sink_name))
-            getattr(driver, sink_name).subscribe( \
+            getattr(driver, sink_name).subscribe(
                 getattr(sink_proxies[driver_name], sink_name))
 
 
-def setup(main, drivers, source_factory):
+def setup(entry_point, drivers):
     sink_proxies = make_sink_proxies(drivers)
-    sources = call_drivers(drivers, sink_proxies, source_factory)
-    sinks = main(sources)
+    sources = call_drivers(drivers, sink_proxies, entry_point.input)
+    sinks = entry_point.call(sources)
 
     def _run():
         subscribe_sinks(sinks, sink_proxies)
@@ -67,14 +65,14 @@ def setup(main, drivers, source_factory):
     return Program(sinks=sinks, sources=sources, run=_run)
 
 
-def run(main, drivers, source_factory=None):
+def run(entry_point, drivers):
     '''
-    Takes a main function and circularly connects it to the given collection of
+    Takes a function and circularly connects it to the given collection of
     driver functions.
 
     parameters:
-    - main: the main function to call once the streams are configured.
-    - drivers: a list of Drivers namedtuple.
+    - entry_point (Component): the function to call once the streams are configured.
+    - drivers: a list of Component namedtuple where each Component is a driver.
     '''
-    program = setup(main, drivers, source_factory)
+    program = setup(entry_point, drivers)
     return program.run()

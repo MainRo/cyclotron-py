@@ -2,7 +2,8 @@ from unittest import TestCase
 
 from collections import namedtuple
 from rx import Observable
-from cyclotron.rx_runner import run, Driver
+from cyclotron import Component
+from cyclotron.rx import run
 
 
 class RunnerTestCase(TestCase):
@@ -18,14 +19,14 @@ class RunnerTestCase(TestCase):
             sink.values.subscribe(lambda i: test_values.append(i))
             return None
         Drv1Sink = namedtuple('Drv1Sink', ['values'])
-        Drv1Driver = Driver(call=drv1, sink=Drv1Sink)
+        Drv1Driver = Component(call=drv1, output=Drv1Sink)
 
         def main(sources):
             val = Observable.from_([1, 2, 3])
             return MainSink(drv1=Drv1Sink(values=val))
 
         drivers = MainDrivers(drv1=Drv1Driver)
-        run(main, drivers)
+        run(Component(call=main, input=MainSink), drivers)
 
         self.assertEqual(3, len(test_values))
         self.assertEqual(1, test_values[0])
@@ -47,14 +48,14 @@ class RunnerTestCase(TestCase):
             sink.values.subscribe(lambda i: test_values.append(i))
             counter_stream = Observable.from_([1, 2, 3])
             return Drv1Source(counter=counter_stream)
-        Drv1Driver = Driver(call=drv1, sink=Drv1Sink)
+        Drv1Driver = Component(call=drv1, output=Drv1Sink)
 
         def main(sources):
             val = sources.drv1.counter
             return MainSink(drv1=Drv1Sink(values=val))
 
         drivers = MainDrivers(drv1=Drv1Driver)
-        run(main, drivers, MainSource)
+        run(Component(call=main, input=MainSource), drivers)
 
         self.assertEqual(3, len(test_values))
         self.assertEqual(1, test_values[0])
@@ -70,7 +71,7 @@ class RunnerTestCase(TestCase):
         def drv1(sink):
             sink.values.subscribe(lambda i: test_values.append(i))
             return None
-        Drv1Driver = Driver(call=drv1, sink=Drv1Sink)
+        Drv1Driver = Component(call=drv1, output=Drv1Sink)
 
         Drv2Sink = namedtuple('Drv1Sink', [])
         Drv2Source = namedtuple('Drv2Source', ['counter'])
@@ -78,7 +79,7 @@ class RunnerTestCase(TestCase):
         def drv2(sinks):
             counter_stream = Observable.from_([1, 2, 3])
             return Drv2Source(counter=counter_stream)
-        Drv2Driver = Driver(call=drv2, sink=Drv2Sink)
+        Drv2Driver = Component(call=drv2, output=Drv2Sink)
 
         MainDrivers = namedtuple('MainDrivers', ['drv1', 'drv2'])
         MainSource = namedtuple('MainSource', ['drv1', 'drv2'])
@@ -89,7 +90,7 @@ class RunnerTestCase(TestCase):
             return MainSink(drv1=Drv1Sink(values=val))
 
         drivers = MainDrivers(drv1=Drv1Driver, drv2=Drv2Driver)
-        run(main, drivers, MainSource)
+        run(Component(call=main, input=MainSource), drivers)
 
         self.assertEqual(3, len(test_values))
         self.assertEqual(1, test_values[0])
