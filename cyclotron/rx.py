@@ -19,19 +19,26 @@ def make_sink_proxies(drivers):
     if drivers is not None:
         for driver_name in drivers._fields:
             driver = getattr(drivers, driver_name)
-            driver_sink = getattr(driver, 'output')
-            driver_sink_proxies = OrderedDict()
-            for name in driver_sink._fields:
-                driver_sink_proxies[name] = Subject()
+            driver_sink = getattr(driver, 'input')
+            if driver_sink is not None:
+                driver_sink_proxies = OrderedDict()
+                for name in driver_sink._fields:
+                    driver_sink_proxies[name] = Subject()
 
-            sink_proxies[driver_name] = driver.output(**driver_sink_proxies)
+                sink_proxies[driver_name] = driver.input(**driver_sink_proxies)
     return sink_proxies
 
 
 def call_drivers(drivers, sink_proxies, source_factory):
     sources = OrderedDict()
     for name in drivers._fields:
-        sources[name] = getattr(drivers, name).call(sink_proxies[name])
+        try:
+            if name in sink_proxies:
+                sources[name] = getattr(drivers, name).call(sink_proxies[name])
+            else:
+                sources[name] = getattr(drivers, name).call()
+        except Exception as e:
+            raise RuntimeError('Unable to initialize {} driver'.format(name)) from e
 
     if source_factory is None:
         return None

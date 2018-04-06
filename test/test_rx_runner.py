@@ -19,7 +19,7 @@ class RunnerTestCase(TestCase):
             sink.values.subscribe(lambda i: test_values.append(i))
             return None
         Drv1Sink = namedtuple('Drv1Sink', ['values'])
-        Drv1Driver = Component(call=drv1, output=Drv1Sink)
+        Drv1Driver = Component(call=drv1, input=Drv1Sink)
 
         def main(sources):
             val = Observable.from_([1, 2, 3])
@@ -48,7 +48,7 @@ class RunnerTestCase(TestCase):
             sink.values.subscribe(lambda i: test_values.append(i))
             counter_stream = Observable.from_([1, 2, 3])
             return Drv1Source(counter=counter_stream)
-        Drv1Driver = Component(call=drv1, output=Drv1Sink)
+        Drv1Driver = Component(call=drv1, input=Drv1Sink)
 
         def main(sources):
             val = sources.drv1.counter
@@ -71,7 +71,7 @@ class RunnerTestCase(TestCase):
         def drv1(sink):
             sink.values.subscribe(lambda i: test_values.append(i))
             return None
-        Drv1Driver = Component(call=drv1, output=Drv1Sink)
+        Drv1Driver = Component(call=drv1, input=Drv1Sink)
 
         Drv2Sink = namedtuple('Drv1Sink', [])
         Drv2Source = namedtuple('Drv2Source', ['counter'])
@@ -79,7 +79,7 @@ class RunnerTestCase(TestCase):
         def drv2(sinks):
             counter_stream = Observable.from_([1, 2, 3])
             return Drv2Source(counter=counter_stream)
-        Drv2Driver = Component(call=drv2, output=Drv2Sink)
+        Drv2Driver = Component(call=drv2, input=Drv2Sink)
 
         MainDrivers = namedtuple('MainDrivers', ['drv1', 'drv2'])
         MainSource = namedtuple('MainSource', ['drv1', 'drv2'])
