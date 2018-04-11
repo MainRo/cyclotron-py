@@ -33,10 +33,17 @@ def call_drivers(drivers, sink_proxies, source_factory):
     sources = OrderedDict()
     for name in drivers._fields:
         try:
+            source = None
+            # Source drivers have no sink
             if name in sink_proxies:
-                sources[name] = getattr(drivers, name).call(sink_proxies[name])
+                source = getattr(drivers, name).call(sink_proxies[name])
             else:
-                sources[name] = getattr(drivers, name).call()
+                source = getattr(drivers, name).call()
+
+            # sink drivers have no source
+            if source is not None:
+                sources[name] = source
+
         except Exception as e:
             raise RuntimeError('Unable to initialize {} driver'.format(name)) from e
 

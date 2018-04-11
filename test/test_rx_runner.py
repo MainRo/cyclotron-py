@@ -12,6 +12,7 @@ class RunnerTestCase(TestCase):
         ''' Creates a cycle with one sink driver.
         '''
         MainDrivers = namedtuple('MainDrivers', ['drv1'])
+        MainSource = namedtuple('MainSource', [])
         MainSink = namedtuple('MainSink', ['drv1'])
         test_values = []
 
@@ -26,7 +27,7 @@ class RunnerTestCase(TestCase):
             return MainSink(drv1=Drv1Sink(values=val))
 
         drivers = MainDrivers(drv1=Drv1Driver)
-        run(Component(call=main, input=MainSink), drivers)
+        run(Component(call=main, input=MainSource), drivers)
 
         self.assertEqual(3, len(test_values))
         self.assertEqual(1, test_values[0])
@@ -76,13 +77,13 @@ class RunnerTestCase(TestCase):
         Drv2Sink = namedtuple('Drv1Sink', [])
         Drv2Source = namedtuple('Drv2Source', ['counter'])
 
-        def drv2(sinks):
+        def drv2(sink):
             counter_stream = Observable.from_([1, 2, 3])
             return Drv2Source(counter=counter_stream)
         Drv2Driver = Component(call=drv2, input=Drv2Sink)
 
         MainDrivers = namedtuple('MainDrivers', ['drv1', 'drv2'])
-        MainSource = namedtuple('MainSource', ['drv1', 'drv2'])
+        MainSource = namedtuple('MainSource', ['drv2'])
         MainSink = namedtuple('MainSink', ['drv1'])
 
         def main(sources):
