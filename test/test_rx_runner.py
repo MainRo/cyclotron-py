@@ -74,13 +74,12 @@ class RunnerTestCase(TestCase):
             return None
         Drv1Driver = Component(call=drv1, input=Drv1Sink)
 
-        Drv2Sink = namedtuple('Drv1Sink', [])
         Drv2Source = namedtuple('Drv2Source', ['counter'])
 
-        def drv2(sink):
+        def drv2():
             counter_stream = Observable.from_([1, 2, 3])
             return Drv2Source(counter=counter_stream)
-        Drv2Driver = Component(call=drv2, input=Drv2Sink)
+        Drv2Driver = Component(call=drv2, input=None)
 
         MainDrivers = namedtuple('MainDrivers', ['drv1', 'drv2'])
         MainSource = namedtuple('MainSource', ['drv2'])
