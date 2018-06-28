@@ -1,18 +1,14 @@
 language: python
 python:
-  - '3.5'
-
+- '3.5'
 install:
-  - pip install nose
-  - pip install -r requirements.txt
-
-script:
-  nosetests -s --verbosity=3
-
+- pip install nose
+- pip install -r requirements.txt
+script: nosetests -s --verbosity=3
 deploy:
   provider: pypi
   user: mainro
   password:
-    secure: Ye9CbAw/trk/0SPJbG+d1Fktu7zKGiWzNNxAs6dEBO+62GU5Fi8m3Tdm0R6Jel81gjPsV59XqGukkYfBToKJSs+hGGsSrW0DjAmJJNEqOIa0yF835fAC/WAjqL+IvC6P1Y0Bqb4aV6JLWoLgAiM10cudATCiGH6hkt/JoXietDRorvfujvUxgqacAvcrHGiJC40VJTGdcgR/Ne4CcoXTeoes6YoIissFgqRsjgv3/YuvySnmcyiFIGnGEX6o3wWtmTbNfDWU7yGpnO3SHsnXmsKCvzoiPPwuLpT+mSmQfI0zfBEJ+b4C/CN/ZtJRX404wWAhntVbjpiqs9TH3ZQZXA82AA1Sw6zoWo5gi07IomhElyP1ZaFfrQqM+itzyFB6e1O5JBml8ptq7GF0s03IlK9sMNTbnW9DqK2YSXKLllOn3WbaPigt/PRtPbyYod7uKpGgGfJtsl1UoyEi/AyzzB3oeH1ktC1jKF3L5mzd5yxapwAgpIC9usuq0882QGy+JdF4xaaUb/WYLQMQp0RTcd3erJazN7hFVc/pBWn7RwnVlko7LyjiTeHMKnUnR+xzUU3iYL2Rz4Xm6KF8cqmg7lRe9W1beA7Tj/2QFkpRm3N8XIsCt3XMJMLCTGBHyfvXnhmSxLglK5tO1lrs2LWJ2fi4MeLmR/NptqBGHAICS/o=
+    secure: IIDi7NsBeM1JRVT2Jp4RXAyZNBdp3VX8E2TRQdv7Fq29Nm0IdsP5LHcI+rfyu2ZSV7W7LmQuUh+qM1DyCXpERXyc8VnxWLfxeYXc4I8PuNrBDY+JgeWMgGzMQ/VBnbFOMTa1w/DiVSkLMG7YEvhNtDDVQx/JMoMh+u/S9izxQt4VvdDG9xeLsh1ItAERIJwVDvszjglrbJLoeiQ1FTKN99l+ENNVc16pytm/lSCn2zuHhPyffozoC5Jype09Clsd+waUVUcaHlIuu2MY8mtdLckPHy3/5YFmb/0CkXwnuNzwz61SaejQ8HXmlDLqxmXvJqzTE/aCqPZYuCUFt7Sfm8n5vRxn18NDPj5pOKor4QaydVL4WkBCNsKFQKNXbBUyyfpkuvf3olBjJ3lAcP64V9M8vLi4qhBmgfwq9M13dCtWkS0L186nQhQPpaalHiFMn0uXaMGJtlZztOG/PSmqtlOtY5NaFcCF6UQ2opFaHIu8LBbF1FW6b29xIxtBZFjOXyYcky26m7nIUxnMi9ccyi/GA1To5J4kyiY3MycVnkHEvcuC45tL+iKCQLVrHwbdiMbRTs8u6XV5iViPirSaFSgQl5drXG8tS5wRD0L1471vsp9Z/M/VSOZWm5ISVDx9qUvxOm9d1D4aszeqAGSF7yrJ2O9vcJZY17xvDhR6B1o=
   on:
     tags: true
