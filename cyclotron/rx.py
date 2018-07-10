@@ -67,14 +67,10 @@ def setup(entry_point, drivers):
 
     def _run():
         subscribe_sinks(sinks, sink_proxies)
-        '''
-        dispose_replication = replicate_many(sinks, sink_proxies)
 
         def dispose():
-            dispose_sources(sources)
-            dispose_replication()
+            return
         return dispose
-        '''
 
     return Program(sinks=sinks, sources=sources, run=_run)
 

@@ -27,7 +27,8 @@ class RunnerTestCase(TestCase):
             return MainSink(drv1=Drv1Sink(values=val))
 
         drivers = MainDrivers(drv1=Drv1Driver)
-        run(Component(call=main, input=MainSource), drivers)
+        dispose = run(Component(call=main, input=MainSource), drivers)
+        dispose()
 
         self.assertEqual(3, len(test_values))
         self.assertEqual(1, test_values[0])
@@ -56,7 +57,8 @@ class RunnerTestCase(TestCase):
             return MainSink(drv1=Drv1Sink(values=val))
 
         drivers = MainDrivers(drv1=Drv1Driver)
-        run(Component(call=main, input=MainSource), drivers)
+        dispose = run(Component(call=main, input=MainSource), drivers)
+        dispose()
 
         self.assertEqual(3, len(test_values))
         self.assertEqual(1, test_values[0])
@@ -90,7 +92,8 @@ class RunnerTestCase(TestCase):
             return MainSink(drv1=Drv1Sink(values=val))
 
         drivers = MainDrivers(drv1=Drv1Driver, drv2=Drv2Driver)
-        run(Component(call=main, input=MainSource), drivers)
+        dispose = run(Component(call=main, input=MainSource), drivers)
+        dispose()
 
         self.assertEqual(3, len(test_values))
         self.assertEqual(1, test_values[0])
