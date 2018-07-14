@@ -3,7 +3,7 @@
 ===========================
 
 .. |cyclotron-logo| image:: doc/asset/cyclotron_logo.png
-
+    :align: center
 
 .. image:: https://travis-ci.org/MainRo/cyclotron-py.svg?branch=master
     :target: https://travis-ci.org/MainRo/cyclotron-py
@@ -24,7 +24,7 @@ Cyclotron is composed of several python packages:
 ===========================================================  ====================
 Package                                                      Version
 ===========================================================  ====================
-`cyclotron <https://github.com/mainro/cyclotron>`_           |pypi-cyclotron|
+`cyclotron <https://github.com/mainro/cyclotron-py>`_           |pypi-cyclotron|
 `cyclotron-std <https://github.com/mainro/cyclotron-std>`_   |pypi-cyclotron-std|
 `cyclotron-aio <https://github.com/mainro/cyclotron-aio>`_   |pypi-cyclotron-aio|
 ===========================================================  ====================
