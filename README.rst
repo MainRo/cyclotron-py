@@ -3,7 +3,6 @@
 ===========================
 
 .. |cyclotron-logo| image:: doc/asset/cyclotron_logo.png
-    :align: center
 
 .. image:: https://travis-ci.org/MainRo/cyclotron-py.svg?branch=master
     :target: https://travis-ci.org/MainRo/cyclotron-py
