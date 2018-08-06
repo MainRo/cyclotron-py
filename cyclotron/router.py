@@ -40,3 +40,24 @@ def make_crossroad_router(source):
         return Observable.create(lambda o: on_response_subscribe(o, request))
 
     return Observable.create(on_sink_subscribe), route_crossroad
+
+
+def make_error_router():
+    sink_observer = None
+
+    def on_subscribe(observer):
+        nonlocal sink_observer
+        sink_observer = observer
+
+    def route_error(item, convert):
+        def catch_item(i):
+            sink_observer.on_next(convert(i))
+            return Observable.empty()
+
+        return item.catch_exception(catch_item)
+
+    return Observable.create(on_subscribe), route_error
+
+
+def catch_or_flat_map(source, error_map, error_router, source_map=lambda i: i):
+    return source.flat_map(lambda i: error_router(source_map(i), error_map))
