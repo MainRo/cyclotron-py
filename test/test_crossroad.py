@@ -1,10 +1,10 @@
 from unittest import TestCase
 from rx import Observable
 from rx.subjects import Subject
-from cyclotron.rx import make_crossbar
+from cyclotron.router import make_crossroad_router
 
 
-class CrossbarTestCase(TestCase):
+class CrossroadTestCase(TestCase):
 
     def test_item(self):
         actual_sequence = []
@@ -14,11 +14,11 @@ class CrossbarTestCase(TestCase):
             actual_sequence.append(i)
 
         source = Subject()
-        sink, crossbar = make_crossbar(source)
+        sink, route_crossroad = make_crossroad_router(source)
 
         Observable.from_([1, 2]) \
             .do_action(lambda i: print) \
-            .let(crossbar) \
+            .let(route_crossroad) \
             .do_action(lambda i: print) \
             .subscribe(on_chain_item)
 
@@ -43,10 +43,10 @@ class CrossbarTestCase(TestCase):
             actual_error = e
 
         source = Subject()
-        sink, crossbar = make_crossbar(source)
+        sink, route_crossroad = make_crossroad_router(source)
 
         Observable.throw("error") \
-            .let(crossbar) \
+            .let(route_crossroad) \
             .subscribe(
                 on_next=on_chain_item,
                 on_error= on_error)
@@ -70,10 +70,10 @@ class CrossbarTestCase(TestCase):
             actual_error = e
 
         source = Subject()
-        sink, crossbar = make_crossbar(source)
+        sink, route_crossroad = make_crossroad_router(source)
 
         Observable.from_([1, 2]) \
-            .let(crossbar) \
+            .let(route_crossroad) \
             .subscribe(
                 on_next=on_chain_item,
                 on_error= on_error)
