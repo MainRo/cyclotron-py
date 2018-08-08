@@ -29,7 +29,8 @@ class CrossroadTestCase(TestCase):
         )
 
         result = Observable.merge(origin, sink)
-        result.subscribe(on_chain_item)
+        disposable = result.subscribe(on_chain_item)
+        disposable.dispose()
 
         expected_sequence = [1, -100]
         self.assertEqual(actual_sequence, expected_sequence)
