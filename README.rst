@@ -2,7 +2,7 @@
 |cyclotron-logo| Cyclotron
 ===========================
 
-.. |cyclotron-logo| image:: doc/asset/cyclotron_logo.png
+.. |cyclotron-logo| image:: docs/asset/cyclotron_logo.png
 
 .. image:: https://travis-ci.org/MainRo/cyclotron-py.svg?branch=master
     :target: https://travis-ci.org/MainRo/cyclotron-py

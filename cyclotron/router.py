@@ -6,18 +6,19 @@ def make_crossroad_router(source):
 
         A crossroad is a cross-routing between two pair of sink/source
         observables. This allows to use wrap drivers without breaking the
-        Observable chain. A crossreaod has the following structure:
+        Observable chain. A crossreaod has the following structure:::
 
-                     ________________
-                    |                |
-                    |   | --------|  |
-        request ----|---(----|    |--|---> response
-                    |   |    |       |
-                    |   |    |       |
-        source  ----|---|    |-------|---> sink
-                    |                |
-                    |    crossroad   |
-                    |________________|
+
+                         ________________
+                        |                |
+                        |   | --------|  |
+            request ----|---(----|    |--|---> response
+                        |   |    |       |
+                        |   |    |       |
+            source  ----|---|    |-------|---> sink
+                        |                |
+                        |    crossroad   |
+                        |________________|
 
         The crossroad function returned by this factory takes a request object
         as input and returns a response object as output. Items received on the
@@ -39,6 +40,7 @@ def make_crossroad_router(source):
             An operator function that can be used with the let operator. It
             takes an observable as input an returned a observable, routing
             their items as described above.
+
     """
     sink_observer = None
     response_observer = None
