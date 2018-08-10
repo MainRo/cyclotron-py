@@ -10,6 +10,9 @@
 .. image:: https://badge.fury.io/py/cyclotron.svg
     :target: https://badge.fury.io/py/cyclotron
 
+.. image:: https://readthedocs.org/projects/cyclotron-py/badge/?version=latest
+    :target: https://cyclotron-py.readthedocs.io/en/latest/?badge=latest
+    :alt: Documentation Status
 
 Cyclotron is a functional and reactive framework for Python and
 `RxPY <https://github.com/ReactiveX/RxPY/>`_.
