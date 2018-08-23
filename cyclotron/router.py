@@ -4,42 +4,34 @@ from rx import Observable
 def make_crossroad_router(source):
     """ Creates a crossroad router
 
-        A crossroad is a cross-routing between two pair of sink/source
-        observables. This allows to use wrap drivers without breaking the
-        Observable chain. A crossreaod has the following structure:::
+    A crossroad is a cross-routing between two pair of sink/source
+    observables. This allows to use drivers without breaking the
+    Observable chain. A crossroad has the following structure:
 
+    .. image:: ../docs/asset/crossroad.png
+        :scale: 60%
+        :align: center
 
-                         ________________
-                        |                |
-                        |   | --------|  |
-            request ----|---(----|    |--|---> response
-                        |   |    |       |
-                        |   |    |       |
-            source  ----|---|    |-------|---> sink
-                        |                |
-                        |    crossroad   |
-                        |________________|
+    The crossroad function returned by this factory takes a request object
+    as input and returns a response object as output. Items received on the
+    request observable are routed to the sink Observable. Items received on
+    the source observable are routed on the response observable.
 
-        The crossroad function returned by this factory takes a request object
-        as input and returns a response object as output. Items received on the
-        request observable are routed to the sink Observable. Items received on
-        the source observable are routed on the response observable.
+    Parameters
+    ----------
+    source : Observable
+        The source observable of the driver to wrap.
 
-        Parameters
-        ----------
-        source : Observable
-            The source observable of the driver to wrap.
+    Returns
+    -------
+    sink : Observable
+        A sink observable that must be routed to the sink observable of the
+        driver.
 
-        Returns
-        -------
-        sink : Observable
-            A sink observable that must be routed to the sink observable of the
-            driver.
-
-        crossroad : function
-            An operator function that can be used with the let operator. It
-            takes an observable as input an returned a observable, routing
-            their items as described above.
+    crossroad : function
+        An operator function that can be used with the let operator. It
+        takes an observable as input an returned a observable, routing
+        their items as described above.
 
     """
     sink_observer = None
@@ -98,6 +90,24 @@ def make_crossroad_router(source):
 
 
 def make_error_router():
+    """ Creates an error router
+
+    Returns
+    -------
+    error_observable: observable
+        An observable emitting errors remapped.
+
+    route_error: function
+        A function taking two parameters: obs, and convert. The obs parameter
+        is an observable whose error must be catch. The convert parameter is 
+        a function used to map the error.
+
+    Examples
+    --------
+
+    >>> sink, route_error = make_error_router()
+
+    """
     sink_observer = None
 
     def on_subscribe(observer):
@@ -109,15 +119,51 @@ def make_error_router():
 
         return dispose
 
-    def route_error(item, convert):
-        def catch_item(i):
-            sink_observer.on_next(convert(i))
+    def route_error(obs, convert):
+        """ Handles error raised by obs observable
+
+        catches any error raised by obs, maps it to anther object with the
+        convert function, and emits in on the error observer. 
+
+        """
+        def catch_error(e):
+            sink_observer.on_next(convert(e))
             return Observable.empty()
 
-        return item.catch_exception(catch_item)
+        return obs.catch_exception(catch_error)
 
     return Observable.create(on_subscribe), route_error
 
 
 def catch_or_flat_map(source, error_map, error_router, source_map=lambda i: i):
+    """ Wraps an error router in a alettable function 
+
+    Parameters
+    ----------
+    source: Observable (higher order)
+        Observable with errors to route.
+
+    error_map: function
+        Function used to map errors before routing them.
+
+    error_router: function
+        An error router obtained by with make_error_router.
+
+    source_map: function
+        A function used to select the observable from each item is source.
+
+    Examples
+    ---------
+
+    >>> sink, route_error = make_error_router()
+    >>> Observable.from_([
+            Observable.just(1),
+            Observable.throw(-1)
+        ])
+        .let(catch_or_flat_map,
+            error_map=lambda e: e.args[0] * 100,
+            error_router=route_error
+        )
+
+    """
     return source.flat_map(lambda i: error_router(source_map(i), error_map))
