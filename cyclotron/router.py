@@ -89,8 +89,17 @@ def make_crossroad_router(source):
     return Observable.create(on_sink_subscribe), route_crossroad
 
 
+
 def make_error_router():
     """ Creates an error router
+
+    An error router takes a higher order observable a input and returns two 
+    observables: One containing the flattened items of the input observable
+    and another one containing the flattened errors of the input observable.
+
+    .. image:: ../docs/asset/error_router.png
+        :scale: 60%
+        :align: center    
 
     Returns
     -------
@@ -98,14 +107,16 @@ def make_error_router():
         An observable emitting errors remapped.
 
     route_error: function
-        A function taking two parameters: obs, and convert. The obs parameter
-        is an observable whose error must be catch. The convert parameter is 
-        a function used to map the error.
+        A lettable function routing errors and taking three parameters:
+        * source: Observable (higher order). Observable with errors to route.
+        * error_map: function. Function used to map errors before routing them.
+        * source_map: function. A function used to select the observable from each item is source.
 
     Examples
     --------
 
     >>> sink, route_error = make_error_router()
+        my_observable.let(route_error, error_map=lambda e: e)
 
     """
     sink_observer = None
@@ -132,38 +143,9 @@ def make_error_router():
 
         return obs.catch_exception(catch_error)
 
-    return Observable.create(on_subscribe), route_error
+    def catch_or_flat_map(source, error_map, source_map=lambda i: i):
+        return source.flat_map(lambda i: route_error(source_map(i), error_map))
+
+    return Observable.create(on_subscribe), catch_or_flat_map
 
 
-def catch_or_flat_map(source, error_map, error_router, source_map=lambda i: i):
-    """ Wraps an error router in a alettable function 
-
-    Parameters
-    ----------
-    source: Observable (higher order)
-        Observable with errors to route.
-
-    error_map: function
-        Function used to map errors before routing them.
-
-    error_router: function
-        An error router obtained by with make_error_router.
-
-    source_map: function
-        A function used to select the observable from each item is source.
-
-    Examples
-    ---------
-
-    >>> sink, route_error = make_error_router()
-    >>> Observable.from_([
-            Observable.just(1),
-            Observable.throw(-1)
-        ])
-        .let(catch_or_flat_map,
-            error_map=lambda e: e.args[0] * 100,
-            error_router=route_error
-        )
-
-    """
-    return source.flat_map(lambda i: error_router(source_map(i), error_map))

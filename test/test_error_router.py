@@ -1,7 +1,7 @@
 from unittest import TestCase
 from rx import Observable
 from rx.subjects import Subject
-from cyclotron.router import make_error_router, catch_or_flat_map
+from cyclotron.router import make_error_router
 
 
 class CrossroadTestCase(TestCase):
@@ -21,9 +21,8 @@ class CrossroadTestCase(TestCase):
                 Observable.throw(-1)
             ])
             .do_action(lambda i: print)
-            .let(catch_or_flat_map,
+            .let(route_error,
                 error_map=lambda e: e.args[0] * 100,
-                error_router=route_error
             )
             .do_action(lambda i: print)
         )
