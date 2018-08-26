@@ -36,7 +36,7 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Intended Audience :: Developers',
         'Programming Language :: Python :: 3'
-    ]
+    ],
     project_urls={
         'Documentation': 'https://cyclotron-py.readthedocs.io',
     }
