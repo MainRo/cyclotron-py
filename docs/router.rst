@@ -7,7 +7,7 @@ chain of opertors.
 crossroad
 ---------
 
-.. autofunction:: cyclotron.router.make_crossroad_router
+.. autofunction:: cyclotron.router.crossroad
 
 error router
 ------------

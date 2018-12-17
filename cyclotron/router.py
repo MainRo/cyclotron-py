@@ -1,26 +1,88 @@
 from rx import Observable
+import cyclotron
 
 
-def make_crossroad_router(source):
+def make_crossroad_router(source, drain=False):
+    ''' legacy crossroad implementation. deprecated
+    '''
+    sink_observer = None
+
+    def on_sink_subscribe(observer):
+        nonlocal sink_observer
+        sink_observer = observer
+
+        def dispose():
+            nonlocal sink_observer
+            sink_observer = None
+
+        return dispose
+
+    def route_crossroad(request):
+        def on_response_subscribe(observer):
+            def on_next_source(i):
+                if type(i) is cyclotron.Drain:
+                    observer.on_completed()
+                else:
+                    observer.on_next(i)
+
+            source_disposable = source.subscribe(
+                on_next=on_next_source,
+                on_error=lambda e: observer.on_error(e),
+                on_completed=lambda: observer.on_completed()
+            )
+
+            def on_next_request(i):
+                if sink_observer is not None:
+                    sink_observer.on_next(i)
+
+            def on_request_completed():
+                if sink_observer is not None:
+                    if drain is True:
+                        sink_observer.on_next(cyclotron.Drain())
+                    else:
+                        sink_observer.on_completed()
+
+            request_disposable = request.subscribe(
+                on_next=on_next_request,
+                on_error=observer.on_error,
+                on_completed=on_request_completed
+            )
+
+            def dispose():
+                source_disposable.dispose()
+                request_disposable.dispose()
+
+            return dispose
+
+        return Observable.create(on_response_subscribe)
+
+    return Observable.create(on_sink_subscribe), route_crossroad
+
+
+def crossroad(request, source, drain=False):
     """ Creates a crossroad router
 
     A crossroad is a cross-routing between two pair of sink/source
-    observables. This allows to use drivers without breaking the
-    Observable chain. A crossroad has the following structure:
+    observables. This allows to use drivers with less discruption on
+    the Observable chain. A crossroad has the following structure:
 
     .. image:: ../docs/asset/crossroad.png
         :scale: 60%
         :align: center
 
-    The crossroad function returned by this factory takes a request object
-    as input and returns a response object as output. Items received on the
-    request observable are routed to the sink Observable. Items received on
-    the source observable are routed on the response observable.
+    This function is a lettable operator.
 
     Parameters
     ----------
+    request : Observable
+        The observable coming from the observable chain.
+
     source : Observable
         The source observable of the driver to wrap.
+
+    drain : Boolean
+        Indicated whether items should be drained form the driver before
+        forwarding completion events.
 
     Returns
     -------
@@ -28,78 +90,68 @@ def make_crossroad_router(source):
         A sink observable that must be routed to the sink observable of the
         driver.
 
-    crossroad : function
-        An operator function that can be used with the let operator. It
-        takes an observable as input an returned a observable, routing
-        their items as described above.
+    response : Observable
+        The response coming from the driver.
 
     """
     sink_observer = None
-    response_observer = None
-    request_observable = None
-    request_disposable = None
-    source_disposable = None
 
     def on_sink_subscribe(observer):
         nonlocal sink_observer
         sink_observer = observer
-        crossroad_subscribe(sink_observer, response_observer, request_observable)
 
-        def dispose():
-            request_disposable.dispose()
+    def on_response_subscribe(observer):
+            def on_next_source(i):
+                if type(i) is cyclotron.Drain:
+                    observer.on_completed()
+                else:
+                    observer.on_next(i)
 
-        return dispose
+            source_disposable = source.subscribe(
+                on_next=on_next_source,
+                on_error=lambda e: observer.on_error(e),
+                on_completed=lambda: observer.on_completed()
+            )
 
-    def on_response_subscribe(observer, request):
-        nonlocal response_observer
-        nonlocal request_observable
-        response_observer = observer
-        request_observable = request
-        crossroad_subscribe(sink_observer, response_observer, request_observable)
+            def on_next_request(i):
+                if sink_observer is not None:
+                    sink_observer.on_next(i)
 
-        def dispose():
-            source_disposable.dispose()
+            def on_request_completed():
+                if sink_observer is not None:
+                    if drain is True:
+                        sink_observer.on_next(cyclotron.Drain())
+                    else:
+                        sink_observer.on_completed()
 
-        return dispose
+            request_disposable = request.subscribe(
+                on_next=on_next_request,
+                on_error=observer.on_error,
+                on_completed=on_request_completed
+            )
 
-    def crossroad_subscribe(sink_observer, response_observer, request):
-        nonlocal request_disposable
-        nonlocal source_disposable
+            def dispose():
+                source_disposable.dispose()
+                request_disposable.dispose()
 
-        if sink_observer is None \
-            or response_observer is None \
-            or request is None:
-            return
+            return dispose
 
-        request_disposable = request.subscribe(
-            on_next=lambda i: sink_observer.on_next(i),
-            on_error=lambda e: response_observer.on_error(e),
-            on_completed=lambda: sink_observer.on_completed()
-        )
-
-        source_disposable = source.subscribe(
-            on_next=lambda i: response_observer.on_next(i),
-            on_error=lambda e: response_observer.on_error(e),
-            on_completed=lambda: response_observer.on_completed()
-        )
-
-    def route_crossroad(request):
-        return Observable.create(lambda o: on_response_subscribe(o, request))
-
-    return Observable.create(on_sink_subscribe), route_crossroad
-
+    return (
+        Observable.create(on_sink_subscribe),
+        Observable.create(on_response_subscribe)
+    )
 
 
 def make_error_router():
     """ Creates an error router
 
-    An error router takes a higher order observable a input and returns two 
+    An error router takes a higher order observable a input and returns two
     observables: One containing the flattened items of the input observable
     and another one containing the flattened errors of the input observable.
 
     .. image:: ../docs/asset/error_router.png
         :scale: 60%
-        :align: center    
+        :align: center
 
     Returns
     -------
@@ -126,6 +178,7 @@ def make_error_router():
         sink_observer = observer
 
         def dispose():
+            nonlocal sink_observer
             sink_observer = None
 
         return dispose
@@ -134,7 +187,7 @@ def make_error_router():
         """ Handles error raised by obs observable
 
         catches any error raised by obs, maps it to anther object with the
-        convert function, and emits in on the error observer. 
+        convert function, and emits in on the error observer.
 
         """
         def catch_error(e):
@@ -147,5 +200,3 @@ def make_error_router():
         return source.flat_map(lambda i: route_error(source_map(i), error_map))
 
     return Observable.create(on_subscribe), catch_or_flat_map
-
-
