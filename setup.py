@@ -1,4 +1,3 @@
-import os, sys
 try:
     from setuptools import setup, find_packages
     use_setuptools = True
@@ -13,9 +12,9 @@ except IOError:
     # maybe running setup.py from some other dir
     description = ''
 
-python_requires='>=3.5'
+python_requires = '>=3.5'
 install_requires = [
-    'rx>=1.6'
+    'rx>=1.6,<2.0'
 ]
 
 setup(
