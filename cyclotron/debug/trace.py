@@ -1,6 +1,6 @@
 import datetime
 import traceback
-from rx import Observer
+from rx.core import Observer
 
 
 class TraceObserver(Observer):

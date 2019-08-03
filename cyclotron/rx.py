@@ -1,6 +1,5 @@
 from collections import namedtuple, OrderedDict
-from rx import Observable
-from rx.subjects import Subject
+from rx.subject import Subject
 
 Program = namedtuple('Program', ['sinks', 'sources', 'run'])
 

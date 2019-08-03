@@ -1,6 +1,6 @@
 import functools
 from .rx_test_case import RxTestCase
-from rx.subjects import Subject
+from rx.subject import Subject
 from cyclotron.router import make_crossroad_router, crossroad
 
 
@@ -17,9 +17,9 @@ class CrossroadTestCase(RxTestCase):
         request = Subject()
         sink, route_crossroad = make_crossroad_router(source)
 
-        response_disposable = request \
-            .let(route_crossroad) \
-            .subscribe(on_chain_item)
+        response_disposable = request.pipe(
+            route_crossroad
+        ).subscribe(on_chain_item)
 
         sink_disposable = sink.subscribe(
             on_next=lambda i: source.on_next(i * 2))
@@ -42,8 +42,9 @@ class CrossroadTestCase(RxTestCase):
         source = Subject()
         request = Subject()
 
-        sink, response = request \
-            .let(crossroad, source=source)
+        sink, response = request.pipe(
+            crossroad(source=source)
+        )
 
         response_disposable = response.subscribe(on_chain_item)
 
@@ -74,9 +75,9 @@ class CrossroadTestCase(RxTestCase):
         request = Subject()
         sink, route_crossroad = make_crossroad_router(source)
 
-        response_disposable = request \
-            .let(route_crossroad) \
-            .subscribe(
+        response_disposable = request.pipe(
+            route_crossroad
+        ).subscribe(
                 on_next=on_chain_item,
                 on_error=on_error)
 
@@ -105,9 +106,9 @@ class CrossroadTestCase(RxTestCase):
         request = Subject()
         sink, route_crossroad = make_crossroad_router(source)
 
-        response_disposable = request \
-            .let(route_crossroad) \
-            .subscribe(
+        response_disposable = request.pipe(
+            route_crossroad
+        ).subscribe(
                 on_next=on_chain_item,
                 on_error=on_error)
 
@@ -131,9 +132,9 @@ class CrossroadTestCase(RxTestCase):
             on_error=functools.partial(self.on_error, 'sink'),
             on_completed=functools.partial(self.on_completed, 'sink'))
 
-        request \
-            .let(route_crossroad) \
-            .subscribe(
+        request.pipe(
+            route_crossroad,
+        ).subscribe(
                 on_next=functools.partial(self.on_next, 'response'),
                 on_error=functools.partial(self.on_error, 'response'),
                 on_completed=functools.partial(self.on_completed, 'response'))

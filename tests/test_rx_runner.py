@@ -1,7 +1,7 @@
 from unittest import TestCase
 
 from collections import namedtuple
-from rx import Observable
+import rx
 from cyclotron import Component
 from cyclotron.rx import run
 
@@ -23,7 +23,7 @@ class RunnerTestCase(TestCase):
         Drv1Driver = Component(call=drv1, input=Drv1Sink)
 
         def main(sources):
-            val = Observable.from_([1, 2, 3])
+            val = rx.from_([1, 2, 3])
             return MainSink(drv1=Drv1Sink(values=val))
 
         drivers = MainDrivers(drv1=Drv1Driver)
@@ -48,7 +48,7 @@ class RunnerTestCase(TestCase):
 
         def drv1(sink):
             sink.values.subscribe(lambda i: test_values.append(i))
-            counter_stream = Observable.from_([1, 2, 3])
+            counter_stream = rx.from_([1, 2, 3])
             return Drv1Source(counter=counter_stream)
         Drv1Driver = Component(call=drv1, input=Drv1Sink)
 
@@ -79,7 +79,7 @@ class RunnerTestCase(TestCase):
         Drv2Source = namedtuple('Drv2Source', ['counter'])
 
         def drv2():
-            counter_stream = Observable.from_([1, 2, 3])
+            counter_stream = rx.from_([1, 2, 3])
             return Drv2Source(counter=counter_stream)
         Drv2Driver = Component(call=drv2, input=None)
 

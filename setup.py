@@ -1,3 +1,5 @@
+import sys
+
 try:
     from setuptools import setup, find_packages
     use_setuptools = True
@@ -12,9 +14,12 @@ except IOError:
     # maybe running setup.py from some other dir
     description = ''
 
+needs_pytest = {'pytest', 'test', 'ptr'}.intersection(sys.argv)
+pytest_runner = ['pytest-runner'] if needs_pytest else []
+
 python_requires = '>=3.5'
 install_requires = [
-    'rx>=1.6,<2.0'
+    'rx>=3.0'
 ]
 
 setup(
@@ -28,6 +33,8 @@ setup(
     author_email='romain.picard@oakbits.com',
     packages=find_packages(),
     install_requires=install_requires,
+    setup_requires=pytest_runner,
+    tests_require=['pytest>=5.0.1'],
     include_package_data=True,
     platforms='any',
     classifiers=[
