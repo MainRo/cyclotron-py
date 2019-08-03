@@ -8,3 +8,4 @@ dist
 build
 _build
 .vscode
+.eggs
