@@ -44,7 +44,7 @@ class TraceObserverTestCase(TestCase):
         source.pipe(trace_observable(
             prefix='foo',
             date=datetime.datetime(year=2018, month=8, day=3))
-        ).subscribe()
+        ).subscribe(on_error=lambda _: None)
         source.on_error('error')
         self.assertEqual(
             '2018-08-03 00:00:00:foo - on_error: error',

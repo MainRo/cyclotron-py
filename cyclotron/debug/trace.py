@@ -16,11 +16,13 @@ def trace_observable(prefix, trace_next=True, trace_next_payload=True, date=None
                         print("{}:{} - on_next".format(
                             date or datetime.datetime.now(),
                             prefix))
+                observer.on_next(value)
 
             def on_completed():
                 print("{}:{} - on_completed".format(
                     date or datetime.datetime.now(),
                     prefix))
+                observer.on_completed()
 
             def on_error(error):
                 if isinstance(error, Exception):
@@ -32,6 +34,7 @@ def trace_observable(prefix, trace_next=True, trace_next_payload=True, date=None
                     print("{}:{} - on_error: {}".format(
                         date or datetime.datetime.now(),
                         prefix, error))
+                observer.on_error(error)
 
             source.subscribe(
                 on_next=on_next,
