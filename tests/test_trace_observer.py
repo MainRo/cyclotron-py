@@ -2,8 +2,10 @@ from unittest import TestCase
 import sys
 import datetime
 from io import StringIO
+import rx
+from rx.subject import Subject
 
-from cyclotron.debug import TraceObserver
+from cyclotron.debug import trace_observable
 
 
 class TraceObserverTestCase(TestCase):
@@ -16,38 +18,56 @@ class TraceObserverTestCase(TestCase):
         sys.stdout = self.saved_stdout
 
     def test_base_on_next(self):
-        observer = TraceObserver(prefix='foo')
-        observer.on_next('bar', date=datetime.datetime(year=2018, month=8, day=3))
+        source = Subject()
+        source.pipe(trace_observable(
+            prefix='foo',
+            date=datetime.datetime(year=2018, month=8, day=3))
+        ).subscribe()
+        source.on_next('bar')
         self.assertEqual(
             '2018-08-03 00:00:00:foo - on_next: bar',
             self.out.getvalue().strip())
 
     def test_base_on_completed(self):
-        observer = TraceObserver(prefix='foo')
-        observer.on_completed(date=datetime.datetime(year=2018, month=8, day=3))
+        source = Subject()
+        source.pipe(trace_observable(
+            prefix='foo',
+            date=datetime.datetime(year=2018, month=8, day=3))
+        ).subscribe()
+        source.on_completed()
         self.assertEqual(
             '2018-08-03 00:00:00:foo - on_completed',
             self.out.getvalue().strip())
 
     def test_base_on_error(self):
-        observer = TraceObserver(prefix='foo')
-        observer.on_error('error', date=datetime.datetime(year=2018, month=8, day=3))
+        source = Subject()
+        source.pipe(trace_observable(
+            prefix='foo',
+            date=datetime.datetime(year=2018, month=8, day=3))
+        ).subscribe()
+        source.on_error('error')
         self.assertEqual(
             '2018-08-03 00:00:00:foo - on_error: error',
             self.out.getvalue().strip())
 
     def test_no_trace_next(self):
-        observer = TraceObserver(prefix='foo', trace_next=False)
-
-        observer.on_next('bar', datetime.datetime(year=2018, month=8, day=3))
+        source = Subject()
+        source.pipe(trace_observable(
+            prefix='foo', trace_next=False,
+            date=datetime.datetime(year=2018, month=8, day=3))
+        ).subscribe()
+        source.on_next('bar')
         self.assertEqual(
             '',
             self.out.getvalue().strip())
 
     def test_no_payload_next(self):
-        observer = TraceObserver(prefix='foo', trace_next_payload=False)
-
-        observer.on_next('bar', datetime.datetime(year=2018, month=8, day=3))
+        source = Subject()
+        source.pipe(trace_observable(
+            prefix='foo', trace_next_payload=False,
+            date=datetime.datetime(year=2018, month=8, day=3))
+        ).subscribe()
+        source.on_next('bar')
         self.assertEqual(
             '2018-08-03 00:00:00:foo - on_next',
             self.out.getvalue().strip())

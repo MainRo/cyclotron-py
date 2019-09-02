@@ -1,1 +1,1 @@
-from .trace import TraceObserver
+from .trace import trace_observable
