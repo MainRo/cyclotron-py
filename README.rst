@@ -23,19 +23,19 @@ Packages
 
 Cyclotron is composed of several python packages:
 
-===========================================================  ====================
-Package                                                      Version
-===========================================================  ====================
-`cyclotron <https://github.com/mainro/cyclotron-py>`_           |pypi-cyclotron|
-`cyclotron-std <https://github.com/mainro/cyclotron-std>`_   |pypi-cyclotron-std|
-`cyclotron-aio <https://github.com/mainro/cyclotron-aio>`_   |pypi-cyclotron-aio|
-===========================================================  ====================
+====================================================================  =========================
+Package                                                               Version
+====================================================================  =========================
+`cyclotron <https://github.com/mainro/cyclotron-py>`_                 |pypi-cyclotron|
+`cyclotron-std <https://github.com/mainro/cyclotron-std>`_            |pypi-cyclotron-std|
+`cyclotron-aiohttp <https://github.com/mainro/cyclotron-aiohttp>`_    |pypi-cyclotron-aiohttp|
+====================================================================  =========================
 
 .. |pypi-cyclotron| image:: https://badge.fury.io/py/cyclotron.svg
     :target: https://badge.fury.io/py/cyclotron
 
-.. |pypi-cyclotron-aio| image:: https://badge.fury.io/py/cyclotron-aio.svg
-    :target: https://badge.fury.io/py/cyclotron-aio
+.. |pypi-cyclotron-aiohttp| image:: https://badge.fury.io/py/cyclotron-aiohttp.svg
+    :target: https://badge.fury.io/py/cyclotron-aiohttp
 
 .. |pypi-cyclotron-std| image:: https://badge.fury.io/py/cyclotron-std.svg
     :target: https://badge.fury.io/py/cyclotron-std
