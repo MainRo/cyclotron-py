@@ -1,6 +1,7 @@
 import asyncio
 from cyclotron.rx import setup
 
+
 def run(entry_point, drivers, loop=None):
     ''' This is a runner wrapping the cyclotron "run" implementation. It takes
     an additional parameter to provide a custom asyncio mainloop.

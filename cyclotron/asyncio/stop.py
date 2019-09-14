@@ -6,7 +6,7 @@ Sink = namedtuple('Sink', ['control'])
 
 
 def make_driver(loop=None):
-    ''' Returns a stop driver. 
+    ''' Returns a stop driver.
 
     The optional loop argument can be provided to use the driver in another
     loop than the default one.
