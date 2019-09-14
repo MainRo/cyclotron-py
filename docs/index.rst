@@ -17,7 +17,6 @@ easy to write asynchronous reactive applications in a functional way.
 
    rationale
    get_started
-   router
 
 
 
