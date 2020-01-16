@@ -4,6 +4,8 @@
 
 .. |cyclotron-logo| image:: docs/asset/cyclotron_logo.png
 
+A functional and reactive framework for `RxPY <https://github.com/ReactiveX/RxPY/>`_.
+
 .. image:: https://travis-ci.org/MainRo/cyclotron-py.svg?branch=master
     :target: https://travis-ci.org/MainRo/cyclotron-py
 
@@ -14,8 +16,7 @@
     :target: https://cyclotron-py.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
 
-Cyclotron is a functional and reactive framework for Python and
-`RxPY <https://github.com/ReactiveX/RxPY/>`_.
+
 
 ----------------------
 
