@@ -22,15 +22,7 @@ matrix:
     - os: linux
       dist: xenial
       language: python
-      python: '3.8-dev'
-
-    - os: windows
-      language: sh
-      python: '3.7'
-      before_install:
-        - choco install python3
-        - ln -s "/c/Python37/python.exe" "/c/Python37/python3.exe"
-        - export PATH="/c/Python37:/c/Python37/Scripts/:$PATH"
+      python: '3.8'
 
 install:
   - pip install nose
