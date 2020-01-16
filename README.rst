@@ -26,7 +26,7 @@ Cyclotron application is easier to test, maintain, and extend.
 Here is the structure of a cyclotron application:
 
 .. figure:: https://github.com/mainro/cyclotron-py/raw/master/docs/asset/cycle.png
-    :width: 80%
+    :width: 60%
     :align: center
 
 How to use it
