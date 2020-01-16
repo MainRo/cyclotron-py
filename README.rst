@@ -17,11 +17,91 @@
 Cyclotron is a functional and reactive framework for Python and
 `RxPY <https://github.com/ReactiveX/RxPY/>`_.
 
+----------------------
 
-Packages
-=========
+With Cyclotron, you can structure your RxPY code as many reusable components.
+Moreover it naturally encourages to separate pure code and side effects. So a
+Cyclotron application is easier to test, maintain, and extend.
 
-Cyclotron is composed of several python packages:
+Here is the structure of a cyclotron application:
+
+.. figure:: https://github.com/mainro/cyclotron-py/raw/master/docs/asset/cycle.png
+    :width: 80%
+    :align: center
+
+How to use it
+=============
+
+The following example is an http echo server:
+
+.. code:: python
+
+    from collections import namedtuple
+
+    from cyclotron import Component
+    from cyclotron.asyncio.runner import run
+    import cyclotron_aiohttp.httpd as httpd
+    import rx
+    import rx.operators as ops
+
+    EchoSource = namedtuple('EchoSource', ['httpd'])
+    EchoSink = namedtuple('EchoSink', ['httpd'])
+    EchoDrivers = namedtuple('EchoDrivers', ['httpd'])
+
+    def echo_server(source):
+        init = rx.from_([
+            httpd.Initialize(),
+            httpd.AddRoute(methods=['GET'], path='/echo/{what}', id='echo'),
+            httpd.StartServer(host='localhost', port=8080),
+        ])
+
+        echo = source.httpd.route.pipe(
+            ops.filter(lambda i: i.id == 'echo'),
+            ops.flat_map(lambda i: i.request),
+            ops.map(lambda i: httpd.Response(
+                context=i.context,
+                data=i.match_info['what'].encode('utf-8')),
+            )
+        )
+
+        control = rx.merge(init, echo)
+        return EchoSink(httpd=httpd.Sink(control=control))
+
+
+    def main():
+        run(Component(call=echo_server, input=EchoSource),
+            EchoDrivers(httpd=httpd.make_driver()))
+
+
+    if __name__ == '__main__':
+        main()
+
+In this application, the echo_server function is a pure function, while the http
+server is implemented as a driver. 
+
+.. code::
+
+    pip install cyclotron-aiohttp
+
+you can then test it with an http client like curl:
+
+.. code::
+
+    $ curl http://localhost:8080/echo/hello
+    hello
+    
+
+Install
+========
+
+Cyclotron is available on PyPi and can be installed with pip:
+
+.. code:: console
+
+    pip install cyclotron
+
+This project is composed of several python packages. Install also the ones that
+you use in your application:
 
 ====================================================================  =========================
 Package                                                               Version
@@ -39,3 +119,12 @@ Package                                                               Version
 
 .. |pypi-cyclotron-std| image:: https://badge.fury.io/py/cyclotron-std.svg
     :target: https://badge.fury.io/py/cyclotron-std
+
+
+
+License
+=========
+
+This project is licensed under the MIT License - see the `License
+<https://github.com/mainro/cyclotron-py/blob/master/License.txt>`_ file for
+details
