@@ -17,7 +17,7 @@ except IOError:
 needs_pytest = {'pytest', 'test', 'ptr'}.intersection(sys.argv)
 pytest_runner = ['pytest-runner'] if needs_pytest else []
 
-python_requires = '>=3.5'
+python_requires = '>=3.6'
 install_requires = [
     'rx>=3.0'
 ]
