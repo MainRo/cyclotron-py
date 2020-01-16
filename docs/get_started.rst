@@ -5,7 +5,7 @@ install cyclotron asyncio package:
 
 .. code-block:: console
 
-    $ pip3 install cyclotron_aiohttp
+    $ pip3 install cyclotron-aiohttp
 
 
 .. code-block:: python
@@ -22,7 +22,6 @@ install cyclotron asyncio package:
     EchoSink = namedtuple('EchoSink', ['httpd'])
     EchoDrivers = namedtuple('EchoDrivers', ['httpd'])
 
-
     def echo_server(source):
         init = rx.from_([
             httpd.Initialize(),
@@ -31,11 +30,13 @@ install cyclotron asyncio package:
         ])
 
         echo = source.httpd.route.pipe(
-            ops.filter(lambda i: i.id == 'echo')
-            ops.flat_map(lambda i: i.request)
+            ops.filter(lambda i: i.id == 'echo'),
+            ops.flat_map(lambda i: i.request),
             ops.map(lambda i: httpd.Response(
                 context=i.context,
-                data=i.match_info['what'].encode('utf-8')))
+                data=i.match_info['what'].encode('utf-8')),
+            )
+        )
 
         control = rx.merge(init, echo)
         return EchoSink(httpd=httpd.Sink(control=control))
