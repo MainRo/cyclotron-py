@@ -126,5 +126,5 @@ License
 =========
 
 This project is licensed under the MIT License - see the `License
-<https://github.com/mainro/cyclotron-py/blob/master/License.txt>`_ file for
+<https://github.com/mainro/cyclotron-py/raw/master/LICENSE.txt>`_ file for
 details
