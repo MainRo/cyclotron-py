@@ -1,6 +1,6 @@
 import rx
 import rx.operators as ops
-
+from rx.scheduler import CurrentThreadScheduler
 
 def make_error_router():
     """ Creates an error router
@@ -38,7 +38,7 @@ def make_error_router():
         nonlocal sink_observer
         nonlocal sink_scheduler
         sink_observer = observer
-        sink_scheduler = scheduler
+        sink_scheduler = scheduler or CurrentThreadScheduler()
 
         def dispose():
             nonlocal sink_observer
