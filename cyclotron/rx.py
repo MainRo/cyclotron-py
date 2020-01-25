@@ -52,12 +52,13 @@ def call_drivers(drivers, sink_proxies, source_factory):
     return source_factory(**sources)
 
 
-def subscribe_sinks(sinks, sink_proxies):
+def subscribe_sinks(sinks, sink_proxies, scheduler):
     for driver_name in sinks._fields:
         driver = getattr(sinks, driver_name)
         for sink_name in driver._fields:
             getattr(driver, sink_name).subscribe(
-                getattr(sink_proxies[driver_name], sink_name))
+                getattr(sink_proxies[driver_name], sink_name),
+                scheduler=scheduler)
 
 
 def setup(entry_point, drivers):
@@ -65,8 +66,8 @@ def setup(entry_point, drivers):
     sources = call_drivers(drivers, sink_proxies, entry_point.input)
     sinks = entry_point.call(sources)
 
-    def _run():
-        subscribe_sinks(sinks, sink_proxies)
+    def _run(scheduler=None):
+        subscribe_sinks(sinks, sink_proxies, scheduler)
 
         def dispose():
             return
