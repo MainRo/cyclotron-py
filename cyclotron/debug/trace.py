@@ -3,7 +3,10 @@ import traceback
 import rx
 
 
-def trace_observable(prefix, trace_next=True, trace_next_payload=True, date=None):
+def trace_observable(prefix,
+                     trace_next=True, trace_next_payload=True,
+                     trace_subscribe=True,
+                     date=None):
     def _trace(source):
         def on_subscribe(observer, scheduler):
             def on_next(value):
@@ -36,7 +39,11 @@ def trace_observable(prefix, trace_next=True, trace_next_payload=True, date=None
                         prefix, error))
                 observer.on_error(error)
 
-            source.subscribe(
+            if trace_subscribe is True:
+                print("{}:{} - on_subscribe".format(
+                        date or datetime.datetime.now(),
+                        prefix))
+            return source.subscribe(
                 on_next=on_next,
                 on_error=on_error,
                 on_completed=on_completed,

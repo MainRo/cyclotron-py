@@ -25,6 +25,7 @@ class TraceObserverTestCase(TestCase):
         ).subscribe()
         source.on_next('bar')
         self.assertEqual(
+            '2018-08-03 00:00:00:foo - on_subscribe\n'
             '2018-08-03 00:00:00:foo - on_next: bar',
             self.out.getvalue().strip())
 
@@ -36,6 +37,7 @@ class TraceObserverTestCase(TestCase):
         ).subscribe()
         source.on_completed()
         self.assertEqual(
+            '2018-08-03 00:00:00:foo - on_subscribe\n'
             '2018-08-03 00:00:00:foo - on_completed',
             self.out.getvalue().strip())
 
@@ -47,6 +49,7 @@ class TraceObserverTestCase(TestCase):
         ).subscribe(on_error=lambda _: None)
         source.on_error('error')
         self.assertEqual(
+            '2018-08-03 00:00:00:foo - on_subscribe\n'
             '2018-08-03 00:00:00:foo - on_error: error',
             self.out.getvalue().strip())
 
@@ -58,7 +61,7 @@ class TraceObserverTestCase(TestCase):
         ).subscribe()
         source.on_next('bar')
         self.assertEqual(
-            '',
+            '2018-08-03 00:00:00:foo - on_subscribe',
             self.out.getvalue().strip())
 
     def test_no_payload_next(self):
@@ -69,5 +72,17 @@ class TraceObserverTestCase(TestCase):
         ).subscribe()
         source.on_next('bar')
         self.assertEqual(
+            '2018-08-03 00:00:00:foo - on_subscribe\n'
             '2018-08-03 00:00:00:foo - on_next',
+            self.out.getvalue().strip())
+
+    def test_no_subscribe(self):
+        source = Subject()
+        source.pipe(trace_observable(
+            prefix='foo', trace_subscribe=False,
+            date=datetime.datetime(year=2018, month=8, day=3))
+        ).subscribe()
+        source.on_next('bar')
+        self.assertEqual(
+            '2018-08-03 00:00:00:foo - on_next: bar',
             self.out.getvalue().strip())
