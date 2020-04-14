@@ -1,6 +1,7 @@
 import datetime
 import traceback
 import rx
+from rx.disposable import Disposable
 
 
 def trace_observable(prefix,
@@ -39,15 +40,25 @@ def trace_observable(prefix,
                         prefix, error))
                 observer.on_error(error)
 
+            def dispose():
+                if trace_subscribe is True:
+                    print("{}:{} - dispose".format(
+                            date or datetime.datetime.now(),
+                            prefix))
+
+                disposable.dispose()
+
             if trace_subscribe is True:
                 print("{}:{} - on_subscribe".format(
                         date or datetime.datetime.now(),
                         prefix))
-            return source.subscribe(
+            disposable = source.subscribe(
                 on_next=on_next,
                 on_error=on_error,
                 on_completed=on_completed,
             )
+
+            return Disposable(dispose)
 
         return rx.create(on_subscribe)
 
