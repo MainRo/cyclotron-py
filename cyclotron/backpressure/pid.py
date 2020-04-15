@@ -11,24 +11,24 @@ PidContext = namedtuple('PidContext', ['last_error', 'control_value'])
 def compute_pid(error, last_error, p, i, d):
     i_error = error + last_error
     d_error = error - last_error
+    # print("p: {}, i: {}, d: {}".format(error, i_error, d_error))
+    # print("p: {}, i: {}, d: {}".format(p*error, i*i_error, d*d_error))
+    # print(p*error + i*i_error + d*d_error)
     return p*error + i*i_error + d*d_error
 
 
-def pid(setpoint, process_value, p, i, d, t, scheduler=None):
+def pid(setpoint, p, i, d):
     '''
     Args:
         setpoint: An observable emiting setpoint values
-        process_value: An observabe emiting process values
         p: proportional component value
         i: integral component value
         d: derivative component value
-        t: samling period in seconds
-        scheduler: scheduler used to run the timer
     '''
-    def _pid(acc, ii):
+    def _pid_step(acc, ii):
         setpoint = ii[1]
-        process_value = ii[2]
-        error = process_value - setpoint
+        process_value = ii[0]
+        error = setpoint - process_value
         last_error = acc.last_error if acc is not None else 0
         control_value = compute_pid(error, last_error, p, i, d)
 
@@ -37,21 +37,14 @@ def pid(setpoint, process_value, p, i, d, t, scheduler=None):
             control_value=control_value,
         )
 
-    '''
-    process_value = process_value.pipe(
-        trace_observable("pid process"),
-    )
+    def _pid(process):
+        return process.pipe(
+            # trace_observable("pid"),
+            ops.with_latest_from(setpoint),
+            # trace_observable("pid2"),
+            ops.scan(_pid_step, seed=None),
+            # trace_observable("pid3"),
+            ops.map(lambda i: i.control_value),
+        )
 
-    setpoint = setpoint.pipe(
-        trace_observable("pid setpoint"),
-    )
-    '''
-
-    return rx.timer(duetime=t, period=t, scheduler=scheduler).pipe(
-        # trace_observable("pid"),
-        ops.with_latest_from(setpoint, process_value),
-        # trace_observable("pid2"),
-        ops.scan(_pid, seed=None),
-        # trace_observable("pid3"),
-        ops.map(lambda i: i.control_value),
-    )
+    return _pid
