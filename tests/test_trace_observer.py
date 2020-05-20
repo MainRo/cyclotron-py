@@ -38,7 +38,8 @@ class TraceObserverTestCase(TestCase):
         source.on_completed()
         self.assertEqual(
             '2018-08-03 00:00:00:foo - on_subscribe\n'
-            '2018-08-03 00:00:00:foo - on_completed',
+            '2018-08-03 00:00:00:foo - on_completed\n'
+            '2018-08-03 00:00:00:foo - dispose',
             self.out.getvalue().strip())
 
     def test_base_on_error(self):
@@ -50,7 +51,8 @@ class TraceObserverTestCase(TestCase):
         source.on_error('error')
         self.assertEqual(
             '2018-08-03 00:00:00:foo - on_subscribe\n'
-            '2018-08-03 00:00:00:foo - on_error: error',
+            '2018-08-03 00:00:00:foo - on_error: error\n'
+            '2018-08-03 00:00:00:foo - dispose',
             self.out.getvalue().strip())
 
     def test_no_trace_next(self):
