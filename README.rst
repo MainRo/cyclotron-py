@@ -2,7 +2,7 @@
 |cyclotron-logo| Cyclotron
 ===========================
 
-.. |cyclotron-logo| image:: docs/asset/cyclotron_logo.png
+.. |cyclotron-logo| image:: https://github.com/mainro/cyclotron-py/raw/master/docs/asset/cyclotron_logo.png
 
 A functional and reactive framework for `RxPY <https://github.com/ReactiveX/RxPY/>`_.
 
@@ -110,6 +110,8 @@ Package                                                               Version
 `cyclotron <https://github.com/mainro/cyclotron-py>`_                 |pypi-cyclotron|
 `cyclotron-std <https://github.com/mainro/cyclotron-std>`_            |pypi-cyclotron-std|
 `cyclotron-aiohttp <https://github.com/mainro/cyclotron-aiohttp>`_    |pypi-cyclotron-aiohttp|
+`cyclotron-aiokafka <https://github.com/mainro/cyclotron-aiokafka>`_  |pypi-cyclotron-aiokafka|
+`cyclotron-consul <https://github.com/mainro/cyclotron-consul>`_      |pypi-cyclotron-consul|
 ====================================================================  =========================
 
 .. |pypi-cyclotron| image:: https://badge.fury.io/py/cyclotron.svg
@@ -121,6 +123,11 @@ Package                                                               Version
 .. |pypi-cyclotron-std| image:: https://badge.fury.io/py/cyclotron-std.svg
     :target: https://badge.fury.io/py/cyclotron-std
 
+.. |pypi-cyclotron-aiokafka| image:: https://badge.fury.io/py/cyclotron-aiokafka.svg
+    :target: https://badge.fury.io/py/cyclotron-aiokafka
+
+.. |pypi-cyclotron-consul| image:: https://badge.fury.io/py/cyclotron-consul.svg
+    :target: https://badge.fury.io/py/cyclotron-consul
 
 
 License
