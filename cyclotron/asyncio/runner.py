@@ -1,4 +1,12 @@
 import asyncio
+
+try:
+    import uvloop
+except ImportError:
+    pass
+else:
+    uvloop.install()
+
 from cyclotron.rx import setup
 
 
