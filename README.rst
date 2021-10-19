@@ -6,8 +6,8 @@
 
 A functional and reactive framework for `RxPY <https://github.com/ReactiveX/RxPY/>`_.
 
-.. image:: https://travis-ci.org/MainRo/cyclotron-py.svg?branch=master
-    :target: https://travis-ci.org/MainRo/cyclotron-py
+.. image:: https://github.com/MainRo/cyclotron-py/actions/workflows/ci.yml/badge.svg
+    :target: https://github.com/MainRo/cyclotron-py/actions/workflows/ci.yml
 
 .. image:: https://badge.fury.io/py/cyclotron.svg
     :target: https://badge.fury.io/py/cyclotron
