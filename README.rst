@@ -101,6 +101,9 @@ Cyclotron is available on PyPi and can be installed with pip:
 
     pip install cyclotron
 
+Cyclotron automatically uses `uvloop <https://github.com/MagicStack/uvloop>`_
+if it is available.
+
 This project is composed of several python packages. Install also the ones that
 you use in your application:
 
