@@ -24,7 +24,7 @@ install_requires = [
 
 setup(
     name="cyclotron",
-    version='1.2.1',
+    version='1.3.0',
     url='https://github.com/MainRo/cyclotron-py.git',
     license='MIT',
     description="A reactive stream cycle implementation in python",
