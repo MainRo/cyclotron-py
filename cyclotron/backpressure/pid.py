@@ -1,6 +1,6 @@
 from collections import namedtuple
 import reactivex as rx
-import reactivex.operators as rx
+import reactivex.operators as ops
 
 from cyclotron.debug import trace_observable
 
