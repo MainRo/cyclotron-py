@@ -1,1 +1,1 @@
-rx~=4.0
+reactivex~=4.0
