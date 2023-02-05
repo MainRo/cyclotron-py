@@ -1,0 +1,30 @@
+[project]
+name = "cyclotron"
+version = "1.2.1"
+description = "A reactive stream cycle implementation in python"
+readme = "README.rst"
+requires-python = ">=3.7"
+license = {file = "LICENSE.txt"}
+keywords = ["reactivex", "cyclejs"]
+authors = [
+  {email = "romain.picard@oakbits.com"},
+  {name = "Romain Picard"}
+]
+classifiers = [
+  'Development Status :: 5 - Production/Stable',
+  'Intended Audience :: Developers',
+  'Programming Language :: Python :: 3',
+]
+
+dependencies = [
+  'reactivex~=4.0',
+]
+
+[project.optional-dependencies]
+test = [
+  "pytest",
+]
+
+[project.urls]
+repository = "https://github.com/MainRo/cyclotron-py.git"
+documentation = 'https://cyclotron-py.readthedocs.io'

@@ -1,7 +1,8 @@
 from unittest import TestCase
 
 from collections import namedtuple
-import rx
+import reactivex as rx
+
 from cyclotron import Component
 from cyclotron.rx import run
 

@@ -1,5 +1,6 @@
 from collections import namedtuple, OrderedDict
-from rx.subject import Subject
+from reactivex.subject import Subject
+
 
 Program = namedtuple('Program', ['sinks', 'sources', 'run'])
 

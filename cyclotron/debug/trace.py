@@ -1,7 +1,7 @@
 import datetime
 import traceback
-import rx
-from rx.disposable import Disposable
+import reactivex as rx
+from reactivex.disposable import Disposable
 
 
 def trace_observable(prefix,

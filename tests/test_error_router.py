@@ -1,7 +1,9 @@
 from unittest import TestCase
-import rx
-import rx.operators as ops
-from rx.scheduler import CurrentThreadScheduler
+import reactivex as rx
+import reactivex.operators as ops
+from reactivex.scheduler import CurrentThreadScheduler
+
+
 from cyclotron.router import make_error_router
 
 

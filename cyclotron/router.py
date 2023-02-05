@@ -1,6 +1,7 @@
-import rx
-import rx.operators as ops
-from rx.scheduler import CurrentThreadScheduler
+import reactivex as rx
+import reactivex.operators as ops
+from reactivex.scheduler import CurrentThreadScheduler
+
 
 def make_error_router():
     """ Creates an error router

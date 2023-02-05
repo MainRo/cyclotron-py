@@ -2,8 +2,8 @@ from unittest import TestCase
 import sys
 import datetime
 from io import StringIO
-import rx
-from rx.subject import Subject
+import reactivex as rx
+from reactivex.subject import Subject
 
 from cyclotron.debug import trace_observable
 
